@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Metro App</string>
+    <string name="Start">Start:</string>
+    <string name="End">End</string>
+    <string name="Foggy_Bottom">Foggy Bottom</string>
+    <string name="Go">Go</string>
+    <string name="Alert">Alert</string>
+    <string name="Destination">Destination</string>
+    <string name="Remember">Remember</string>
+
+
+
+</resources>
