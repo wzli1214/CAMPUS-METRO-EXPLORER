@@ -2,6 +2,8 @@ package com.example.weizhaoli.gwu_explorer
 
 import android.content.Context
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -9,6 +11,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.*
+import org.jetbrains.anko.AnkoAsyncContext
+import org.jetbrains.anko.doAsync
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -79,19 +84,64 @@ class MainActivity : AppCompatActivity() {
         go.setOnClickListener {
             Log.d("MainActivity", "GO Clicked")
 
-//            val choices = listOf("A", "B", "C")
-            val choices = listOf("1100 S Hayes St, Arlington, VA 22202",
-                "1229 Wisconsin Ave NW, Washington, DC 20007")
 
-            // select_dialog_singlechoice is a pre-defined XML layout for a RadioButton row
-            val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
-            arrayAdapter.addAll(choices)
-            AlertDialog.Builder(this)
-                .setTitle("Possible matches for destination") .setAdapter(arrayAdapter) { dialog, which ->
-                    Toast.makeText(this, "You picked: ${choices[which]}", Toast.LENGTH_SHORT).show() }
-                .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss()
+                val geocoder = Geocoder(this@MainActivity, Locale.getDefault())
+
+                val results: List<Address> = geocoder.getFromLocationName(
+                    destination.text.toString(), 5
+                )
+
+                println("results is:" + results)
+                println("results size is : " + results.size)
+
+
+//      Run the Geocoder in the background thread.
+            doAsync {
+
+                lateinit var addr: MutableList<String>
+
+                if(results.size >=2){
+                    Log.d("MainActivity", "Multiple Results")
+                    val first = results[0]
+                    val firstAdd = first.getAddressLine(0)
+                    val second = results[1]
+                    val secondAdd = second.getAddressLine(1)
+                    addr = mutableListOf(firstAdd, secondAdd)
+
                 }
-                .show()
+//
+               if(results.size ==1){
+                    Log.d("MainActivity", "Got 1 Result")
+                    val first = results[0]
+                    val firstAdd = first.getAddressLine(0)
+                    addr = mutableListOf(firstAdd)
+                }
+//
+                if(results.size == 0){
+                    Log.d("MainActivity","No result")
+                    addr = mutableListOf("No match result")
+
+                }
+
+
+                runOnUiThread {
+                    //                  val choices = listOf("A", "B", "C")
+
+                    // select_dialog_singlechoice is a pre-defined XML layout for a RadioButton row
+                    val arrayAdapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.select_dialog_singlechoice)
+                    arrayAdapter.addAll(addr)
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Possible matches for destination") .setAdapter(arrayAdapter) { dialog, which ->
+                            Toast.makeText(this@MainActivity, "You picked: ${addr[which]}", Toast.LENGTH_SHORT).show() }
+                        .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss()
+                        }
+                        .show()
+
+                }
+
+
+            }
+
 
         }
 
