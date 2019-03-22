@@ -1,3 +1,3 @@
 package com.example.weizhaoli.gwu_explorer
 
-data class Alert (val linename: String, val content: String, val iconUrl: String)
+data class Alert (val linename: String, val content: String)

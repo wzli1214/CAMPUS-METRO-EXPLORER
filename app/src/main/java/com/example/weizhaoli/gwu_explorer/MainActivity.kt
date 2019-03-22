@@ -85,54 +85,81 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "GO Clicked")
 
 
-                val geocoder = Geocoder(this@MainActivity, Locale.getDefault())
 
-                val results: List<Address> = geocoder.getFromLocationName(
-                    destination.text.toString(), 5
-                )
 
-                println("results is:" + results)
-                println("results size is : " + results.size)
+
 
 
 //      Run the Geocoder in the background thread.
             doAsync {
 
-                lateinit var addr: MutableList<String>
+                val geocoder = Geocoder(this@MainActivity, Locale.getDefault())
 
-                if(results.size >=2){
-                    Log.d("MainActivity", "Multiple Results")
-                    val first = results[0]
-                    val firstAdd = first.getAddressLine(0)
-                    val second = results[1]
-                    val secondAdd = second.getAddressLine(1)
-                    addr = mutableListOf(firstAdd, secondAdd)
+                val results: List<Address> = geocoder.getFromLocationName(
+                    destination.text.toString(), 10
+                )
+
+                val addr: MutableList<String> = mutableListOf()
+
+                results.forEach{ curr ->
+                    addr.add(curr.getAddressLine(0))
 
                 }
-//
-               if(results.size ==1){
-                    Log.d("MainActivity", "Got 1 Result")
-                    val first = results[0]
-                    val firstAdd = first.getAddressLine(0)
-                    addr = mutableListOf(firstAdd)
-                }
-//
-                if(results.size == 0){
-                    Log.d("MainActivity","No result")
-                    addr = mutableListOf("No match result")
+
+                if(addr.isEmpty()){
+                    Log.d("MainActivity","No address")
+
+                    addr.add("No match address, please change the address")
+
+                } else{
+                    Log.d("MainActivity", "1 or more addresses")
 
                 }
 
 
+//                Display the radio button dialog in the UI thread
                 runOnUiThread {
-                    //                  val choices = listOf("A", "B", "C")
 
                     // select_dialog_singlechoice is a pre-defined XML layout for a RadioButton row
                     val arrayAdapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.select_dialog_singlechoice)
                     arrayAdapter.addAll(addr)
+
                     AlertDialog.Builder(this@MainActivity)
                         .setTitle("Possible matches for destination") .setAdapter(arrayAdapter) { dialog, which ->
-                            Toast.makeText(this@MainActivity, "You picked: ${addr[which]}", Toast.LENGTH_SHORT).show() }
+
+                            if (addr[which] == "No match address, please change the address") {
+                                dialog.dismiss()
+                            } else {
+
+
+                                println("chose" + " " + addr[which])
+                                println("list which" + "" + results.get(which))
+
+                                val latChose = results.get(which).latitude
+                                val lngChose = results.get(which).longitude
+
+
+
+                                Log.d("MainActivity", "Radio button Clicked")
+                                val intentRoute: Intent = Intent(this@MainActivity, RouteActivity::class.java)
+
+
+//                        Pass the lat and lng to RouteActivity
+                                var bundlePass = Bundle()
+
+                                bundlePass.putDouble("latChose", latChose)
+                                bundlePass.putDouble("lngChose", lngChose)
+
+                                intentRoute.putExtras(bundlePass)
+
+                                startActivity(intentRoute)
+
+
+                                Toast.makeText(this@MainActivity, "You picked: ${addr[which]}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+
+                        }
                         .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss()
                         }
                         .show()
