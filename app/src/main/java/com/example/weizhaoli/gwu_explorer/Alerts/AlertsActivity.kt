@@ -32,7 +32,7 @@ class AlertsActivity : AppCompatActivity() {
         val intent: Intent = intent
 
         retrieveAlerts(
-            apiKey = getString(R.string.wmata_key2),
+            apiKey = getString(R.string.wmata_key3),
             successCallback = { alerts ->
                 runOnUiThread {
                     if (alerts.size > 0) {
