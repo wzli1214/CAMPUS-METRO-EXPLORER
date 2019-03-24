@@ -11,8 +11,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.*
-import org.jetbrains.anko.AnkoAsyncContext
+import com.example.weizhaoli.gwu_explorer.Alerts.AlertsActivity
+import com.example.weizhaoli.gwu_explorer.Route.RouteActivity
 import org.jetbrains.anko.doAsync
+import java.io.IOException
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -85,86 +87,108 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "GO Clicked")
 
 
-
-
-
-
-
 //      Run the Geocoder in the background thread.
             doAsync {
 
                 val geocoder = Geocoder(this@MainActivity, Locale.getDefault())
 
-                val results: List<Address> = geocoder.getFromLocationName(
-                    destination.text.toString(), 10
-                )
 
-                val addr: MutableList<String> = mutableListOf()
+                try{
+                    val results: List<Address> = geocoder.getFromLocationName(
+                        destination.text.toString(), 10
+                    )
 
-                results.forEach{ curr ->
-                    addr.add(curr.getAddressLine(0))
+                    val addr: MutableList<String> = mutableListOf()
 
-                }
+                    results.forEach { curr ->
+                        addr.add(curr.getAddressLine(0))
 
-                if(addr.isEmpty()){
-                    Log.d("MainActivity","No address")
+                    }
 
-                    addr.add("No match address, please change the address")
+//                if (results == null){
+//                    Log.d("MainActivity", "Error during geocoding")
+//
+//                }
 
-                } else{
-                    Log.d("MainActivity", "1 or more addresses")
 
-                }
+
+                    if (addr.isEmpty()) {
+                        Log.d("MainActivity", "No address")
+
+                        addr.add("No match address, please change the address")
+
+                    } else {
+                        Log.d("MainActivity", "1 or more addresses")
+
+                    }
 
 
 //                Display the radio button dialog in the UI thread
-                runOnUiThread {
-
-                    // select_dialog_singlechoice is a pre-defined XML layout for a RadioButton row
-                    val arrayAdapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.select_dialog_singlechoice)
-                    arrayAdapter.addAll(addr)
-
-                    AlertDialog.Builder(this@MainActivity)
-                        .setTitle("Possible matches for destination") .setAdapter(arrayAdapter) { dialog, which ->
-
-                            if (addr[which] == "No match address, please change the address") {
-                                dialog.dismiss()
-                            } else {
+                    runOnUiThread {
 
 
-                                println("chose" + " " + addr[which])
-                                println("list which" + "" + results.get(which))
+                        // select_dialog_singlechoice is a pre-defined XML layout for a RadioButton row
+                        val arrayAdapter =
+                            ArrayAdapter<String>(this@MainActivity, android.R.layout.select_dialog_singlechoice)
+                        arrayAdapter.addAll(addr)
 
-                                val latChose = results.get(which).latitude
-                                val lngChose = results.get(which).longitude
+                        AlertDialog.Builder(this@MainActivity)
+                            .setTitle("Possible matches for destination").setAdapter(arrayAdapter) { dialog, which ->
+
+                                if (addr[which] == "No match address, please change the address") {
+                                    dialog.dismiss()
+                                } else {
+
+
+                                    println("chose" + " " + addr[which])
+                                    println("list which" + "" + results.get(which))
+
+                                    val latChose = results.get(which).latitude
+                                    val lngChose = results.get(which).longitude
 
 
 
-                                Log.d("MainActivity", "Radio button Clicked")
-                                val intentRoute: Intent = Intent(this@MainActivity, RouteActivity::class.java)
+                                    Log.d("MainActivity", "Radio button Clicked")
+                                    val intentRoute: Intent = Intent(this@MainActivity, RouteActivity::class.java)
 
 
 //                        Pass the lat and lng to RouteActivity
-                                var bundlePass = Bundle()
+                                    var bundlePass = Bundle()
+                                    bundlePass.putString("addChose", addr[which])
 
-                                bundlePass.putDouble("latChose", latChose)
-                                bundlePass.putDouble("lngChose", lngChose)
+                                    bundlePass.putDouble("latChose", latChose)
+                                    bundlePass.putDouble("lngChose", lngChose)
 
-                                intentRoute.putExtras(bundlePass)
+                                    intentRoute.putExtras(bundlePass)
 
-                                startActivity(intentRoute)
+                                    startActivity(intentRoute)
 
 
-                                Toast.makeText(this@MainActivity, "You picked: ${addr[which]}", Toast.LENGTH_SHORT)
-                                    .show()
+                                    Toast.makeText(this@MainActivity, "You picked: ${addr[which]}", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+
                             }
+                            .setNegativeButton("Cancel") { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .show()
 
-                        }
-                        .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss()
-                        }
-                        .show()
+                    }
+
+
+                } catch(e: IOException){
+                    runOnUiThread {
+                        // Runs if we have an error
+                        Toast.makeText(this@MainActivity, "Error of retrieving address", Toast.LENGTH_LONG).show()
+
+                    }
+
+
 
                 }
+
+
 
 
             }

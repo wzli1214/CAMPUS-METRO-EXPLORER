@@ -1,4 +1,4 @@
-package com.example.weizhaoli.gwu_explorer
+package com.example.weizhaoli.gwu_explorer.Alerts
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
+import com.example.weizhaoli.gwu_explorer.R
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -15,7 +16,7 @@ import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.io.IOException
 
-class AlertsActivity : AppCompatActivity(){
+class AlertsActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +32,10 @@ class AlertsActivity : AppCompatActivity(){
         val intent: Intent = intent
 
         retrieveAlerts(
+            apiKey = getString(R.string.wmata_key),
             successCallback = { alerts ->
                 runOnUiThread {
-                    if(alerts.size > 0 ){
+                    if (alerts.size > 0) {
                         Log.d("AlertsActivity", "Succeed to got Alerts")
 
 
@@ -54,7 +56,7 @@ class AlertsActivity : AppCompatActivity(){
             errorCallback = {
                 runOnUiThread {
                     // Runs if we have an error
-                        Toast.makeText(this@AlertsActivity, "Error of retrieving alerts", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@AlertsActivity, "Error of retrieving alerts", Toast.LENGTH_LONG).show()
 
                 }
             }
@@ -64,12 +66,12 @@ class AlertsActivity : AppCompatActivity(){
     }
 
 
-//    OkHTTP
+    //    OkHTTP
     fun retrieveAlerts(
-        apiKey: String = "6d5cd368846c478ab5f536251692546b",
+        apiKey: String,
         successCallback: (List<Alert>) -> Unit,
         errorCallback: (Exception) -> Unit
-    ){
+    ) {
         val request = Request.Builder()
             .url("https://api.wmata.com/Incidents.svc/json/Incidents")
             .header("api_key", apiKey)
@@ -77,7 +79,7 @@ class AlertsActivity : AppCompatActivity(){
 
         val client = OkHttpClient()
 
-        client.newCall(request).enqueue(object: Callback {
+        client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("AlertsActivity", "Failed to execute request")
                 errorCallback(e)
@@ -90,34 +92,34 @@ class AlertsActivity : AppCompatActivity(){
 
 
                 val responseString = response?.body()?.string()
-                if(response.isSuccessful && responseString != null){
+                if (response.isSuccessful && responseString != null) {
                     val incidents = JSONObject(responseString).getJSONArray("Incidents")
-                    for(i in 0 until incidents.length()) {
+                    for (i in 0 until incidents.length()) {
                         val curr = incidents.getJSONObject(i)
                         val text = curr.getString("Description")
-                        var name = curr.getString( "LinesAffected")
+                        var name = curr.getString("LinesAffected")
 
                         if (name == "SV;") {
                             name = "Silver"
                         }
 
-                        if (name == "BL;"){
+                        if (name == "BL;") {
                             name = "Blue"
                         }
 
-                        if (name == "RD;"){
+                        if (name == "RD;") {
                             name = "Red"
                         }
 
-                        if (name == "GR;"){
+                        if (name == "GR;") {
                             name = "Green"
                         }
 
-                        if (name == "OR;"){
+                        if (name == "OR;") {
                             name = "Orange"
                         }
 
-                        if (name == "YL;"){
+                        if (name == "YL;") {
                             name = "Yellow"
                         }
 
@@ -143,9 +145,6 @@ class AlertsActivity : AppCompatActivity(){
         })
 
     }
-
-
-
 
 
 //    private fun generateFakeAlerts(): List<Alert> {

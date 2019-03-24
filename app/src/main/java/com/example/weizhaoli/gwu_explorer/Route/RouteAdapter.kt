@@ -1,13 +1,13 @@
-package com.example.weizhaoli.gwu_explorer
+package com.example.weizhaoli.gwu_explorer.Route
 
 import android.support.v7.widget.RecyclerView
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.weizhaoli.gwu_explorer.R
 
-class RouteAdapter constructor(private val stations: List<Station>) : RecyclerView.Adapter<RouteAdapter.ViewHolder>(){
+class RouteAdapter constructor(private val stations: List<Station>) : RecyclerView.Adapter<RouteAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.rowpath, parent, false)

@@ -1,4 +1,4 @@
-package com.example.weizhaoli.gwu_explorer
+package com.example.weizhaoli.gwu_explorer.Alerts
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import kotlinx.android.synthetic.main.row.view.*
+import com.example.weizhaoli.gwu_explorer.R
 
-class AlertsAdapter constructor(private val alerts: List<Alert>) : RecyclerView.Adapter<AlertsAdapter.ViewHolder>(){
+class AlertsAdapter constructor(private val alerts: List<Alert>) : RecyclerView.Adapter<AlertsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.row, parent, false)
@@ -27,7 +27,7 @@ class AlertsAdapter constructor(private val alerts: List<Alert>) : RecyclerView.
     }
 
 
-    class ViewHolder constructor(view: View): RecyclerView.ViewHolder(view){
+    class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
         val linenameTextView: TextView = view.findViewById(R.id.linename)
         val contentTextView: TextView = view.findViewById(R.id.line_content)
         val iconImageView: ImageView = view.findViewById(R.id.icon)
