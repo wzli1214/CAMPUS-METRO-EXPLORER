@@ -46,7 +46,7 @@ class RouteActivity : AppCompatActivity() {
 
 //        retrieve the station
         retrieveStation(
-            apiKey = getString(R.string.wmata_key),
+            apiKey = getString(R.string.wmata_key2),
             latChose = latPass,
             lngChose = lngPass,
             successCallback = { stations ->
@@ -59,7 +59,7 @@ class RouteActivity : AppCompatActivity() {
                     val endStationCode = stations[0].code
 
                     retrievePath(
-                        apiKey = getString(R.string.wmata_key),
+                        apiKey = getString(R.string.wmata_key2),
                         endCode = endStationCode,
                         successCallback = { retrieveStation ->
                             runOnUiThread {
