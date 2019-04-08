@@ -7,6 +7,9 @@
     <string name="Alert">Alert</string>
     <string name="Destination">Destination</string>
     <string name="Remember">Remember</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="Share">SHARE</string>
+    <string name="Driving_directions">DRIVING DIRECTIONS</string>
 
 
 
