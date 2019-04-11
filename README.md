@@ -4,4 +4,4 @@ GWU Explorer​, is a simple app to help GWU students living on campus quickly g
 
 Screenshot:
 
-![image](https://github.com/wzli1214/GWU-EXPLORER/blob/dev/img/ScreenShot.jpeg)
+![image](https://github.com/wzli1214/GWU-EXPLORER/blob/dev/img/Screenshot3.jpg)
